@@ -1,0 +1,17 @@
+{
+  "job_title": "Senior Software Engineer",
+  "company": "Tech Innovations Inc.",
+  "location": "Bengaluru, India",
+  "required_skills": [
+    {"skill": "Python", "weight": 5, "mandatory": true},
+    {"skill": "Machine Learning", "weight": 4, "mandatory": true},
+    {"skill": "Deep Learning", "weight": 3, "mandatory": false},
+    {"skill": "SQL", "weight": 3, "mandatory": true},
+    {"skill": "Cloud Computing (AWS/Azure/GCP)", "weight": 2, "mandatory": false},
+    {"skill": "Project Management", "weight": 1, "mandatory": false}
+  ],
+  "required_experience_years": 5,
+  "required_education": ["Master's Degree", "Bachelor's Degree"],
+  "preferred_certifications": ["AWS Certified Machine Learning", "Google Cloud Professional ML Engineer"],
+  "keywords": ["AI", "Generative AI", "NLP", "Big Data", "Data Science"]
+}
