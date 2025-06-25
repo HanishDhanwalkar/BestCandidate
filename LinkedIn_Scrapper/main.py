@@ -1,19 +1,24 @@
 import os
 import json
 
-from actions import login
-from scraper import Person
+from .actions import login
+from .scraper import Person
 
 from selenium import webdriver
 
 from dotenv import load_dotenv
 
-
-def main(linkedin_url):        
+def scrape_profile(linkedin_url):      
+    if not os.path.exists(".env"):
+        print(".env file doesn't exists.")
+      
     load_dotenv(".env")
 
     PROXY_EMAIL_ID= os.getenv("PROXY_EMAIL_ID")
     PROXY_PASSWORD= os.getenv("PROXY_EMAIL_PASSWORD")
+        
+    if not PROXY_EMAIL_ID or not PROXY_PASSWORD:
+        raise Exception("Please set PROXY_EMAIL_ID and PROXY_EMAIL_PASSWORD in your .env file.")
 
     driver = webdriver.Firefox()
     
@@ -95,9 +100,10 @@ def main(linkedin_url):
     with open(os.path.join(scarped_data_dir, filename), 'w') as f:
         json.dump(data_to_json(data), f, indent=4)
         
-if __name__ == "__main__":
-    
-    pass
-    linkedin_url = ""
-    main(linkedin_url)
+    return "Scraping Successful"
+
+if __name__ == "__main__":    
+#     # pass
+    linkedin_url = "https://www.linkedin.com/in/sahil-sam/"
+    scrape_profile(linkedin_url)
 
