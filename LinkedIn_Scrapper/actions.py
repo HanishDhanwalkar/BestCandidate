@@ -1,4 +1,3 @@
-import getpass
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
@@ -16,7 +15,7 @@ def login(driver, email, password, cookie=None, timeout=10):
         return _login_with_cookie(driver, cookie)
   
     driver.get("https://www.linkedin.com/login")
-    element = WebDriverWait(driver, 10).until(expected_conditions.presence_of_element_located((By.ID, "username")))
+    element = WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.ID, "username")))
   
     email_elem = driver.find_element(By.ID,"username")
     email_elem.send_keys(email)

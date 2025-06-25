@@ -1,10 +1,9 @@
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from selenium.common.exceptions import NoSuchElementException
 
-from objects import Experience, Education, Scraper, Interest, Accomplishment, Contact
+from .objects import Experience, Education, Scraper, Interest, Accomplishment, Contact
 import os
 
 class Person(Scraper):
@@ -14,52 +13,30 @@ class Person(Scraper):
     def __init__(
         self,
         linkedin_url:str,
-        name=None,
-        about=None,
-        experiences=None,
-        educations=None,
-        interests=None,
-        accomplishments=None,
-        # company=None,
-        # job_title=None,
-        contacts=None,
         driver=None,
-        get=True,
         scrape=True,
         close_on_complete=True,
-        time_to_wait_after_login=0,
     ):
+        if driver is None:
+            print("driver is None")
+            
         self.driver = driver
         
         self.linkedin_url = linkedin_url
-        self.name = name
-        self.about = about or []
+        self.name = ""
+        self.about =  []
         self.location = ""
-        self.experiences = experiences or []
-        self.educations = educations or []
-        self.interests = interests or []
-        self.accomplishments = accomplishments or []
+        self.experiences = []
+        self.educations = []
+        self.interests = []
+        self.accomplishments = []
         self.also_viewed_urls = []
-        self.contacts = contacts or []
+        self.contacts = []
 
-        if get:
-            driver.get(linkedin_url)
+        driver.get(linkedin_url)
 
         if scrape:
             self.scrape(close_on_complete)
-
-
-    # def add_interest(self, interest):
-    #     self.interests.append(interest)
-
-    # def add_accomplishment(self, accomplishment):
-    #     self.accomplishments.append(accomplishment)
-
-    # def add_location(self, location):
-    #     self.location = location
-
-    # def add_contact(self, contact):
-    #     self.contacts.append(contact)
 
     def scrape(self, close_on_complete=True):
         if self.is_signed_in():
@@ -223,7 +200,6 @@ class Person(Scraper):
             print("No experience found...")
             pass
         
-
     def get_educations(self):
         try:
             url = os.path.join(self.linkedin_url, "details/education")
@@ -303,7 +279,6 @@ class Person(Scraper):
             print("No education found...")
             pass
         
-        
     def get_name_and_location(self):
         top_panel = self.driver.find_element(By.XPATH, "//*[@class='mt2 relative']")
         self.name = top_panel.find_element(By.TAG_NAME, "h1").text
@@ -315,7 +290,75 @@ class Person(Scraper):
         except NoSuchElementException :
             about=None
         self.about = about
+        
+    def get_interests(self):
+        try:
+            _ = WebDriverWait(self.driver, self.__WAIT_FOR_ELEMENT_TIMEOUT).until(
+                expected_conditions.presence_of_element_located(
+                    (
+                        By.XPATH,
+                        "//*[@class='pv-profile-section pv-interests-section artdeco-container-card artdeco-card ember-view']",
+                    )
+                )
+            )
+            interestContainer = self.driver.find_element(By.XPATH,
+                "//*[@class='pv-profile-section pv-interests-section artdeco-container-card artdeco-card ember-view']"
+            )
+            for interestElement in interestContainer.find_elements(By.XPATH,
+                "//*[@class='pv-interest-entity pv-profile-section__card-item ember-view']"
+            ):
+                interest = Interest(
+                    interestElement.find_element(By.TAG_NAME, "h3").text.strip()
+                )
+                self.interests.append(interest)
+        except:
+            print("error im finding interest......")
 
+    def get_accomplishment(self):
+        try:
+            _ = WebDriverWait(self.driver, self.__WAIT_FOR_ELEMENT_TIMEOUT).until(
+                expected_conditions.presence_of_element_located(
+                    (
+                        By.XPATH,
+                        "//*[@class='pv-profile-section pv-accomplishments-section artdeco-container-card artdeco-card ember-view']",
+                    )
+                )
+            )
+            acc = self.driver.find_element(By.XPATH,
+                "//*[@class='pv-profile-section pv-accomplishments-section artdeco-container-card artdeco-card ember-view']"
+            )
+            for block in acc.find_elements(By.XPATH,
+                "//div[@class='pv-accomplishments-block__content break-words']"
+            ):
+                category = block.find_element(By.TAG_NAME, "h3")
+                for title in block.find_element(By.TAG_NAME,
+                    "ul"
+                ).find_elements(By.TAG_NAME, "li"):
+                    accomplishment = Accomplishment(category.text, title.text)
+                    self.accomplishments.append(accomplishment)
+        except:
+            print("error in finding accomplishment......")
+
+    def get_connections(self):
+        try:
+            self.driver.get("https://www.linkedin.com/mynetwork/invite-connect/connections/")
+            _ = WebDriverWait(self.driver, self.__WAIT_FOR_ELEMENT_TIMEOUT).until(
+                expected_conditions.presence_of_element_located((By.CLASS_NAME, "mn-connections"))
+            )
+            connections = self.driver.find_element(By.CLASS_NAME, "mn-connections")
+            if connections is not None:
+                for conn in connections.find_elements(By.CLASS_NAME, "mn-connection-card"):
+                    anchor = conn.find_element(By.CLASS_NAME, "mn-connection-card__link")
+                    url = anchor.get_attribute("href")
+                    name = conn.find_element(By.CLASS_NAME, "mn-connection-card__details").find_element(By.CLASS_NAME, "mn-connection-card__name").text.strip()
+                    occupation = conn.find_element(By.CLASS_NAME, "mn-connection-card__details").find_element(By.CLASS_NAME, "mn-connection-card__occupation").text.strip()
+
+                    contact = Contact(name=name, occupation=occupation, url=url)
+                    self.contacts.append(contact)
+        except:
+            print("error in finding connections OR No connections......")
+            connections = None
+    
     def scrape_logged_in(self, close_on_complete=True):
         driver = self.driver
         duration = None
@@ -354,96 +397,13 @@ class Person(Scraper):
         driver.get(self.linkedin_url)
 
         # get interest
-        try:
-
-            _ = WebDriverWait(driver, self.__WAIT_FOR_ELEMENT_TIMEOUT).until(
-                expected_conditions.presence_of_element_located(
-                    (
-                        By.XPATH,
-                        "//*[@class='pv-profile-section pv-interests-section artdeco-container-card artdeco-card ember-view']",
-                    )
-                )
-            )
-            interestContainer = driver.find_element(By.XPATH,
-                "//*[@class='pv-profile-section pv-interests-section artdeco-container-card artdeco-card ember-view']"
-            )
-            for interestElement in interestContainer.find_elements(By.XPATH,
-                "//*[@class='pv-interest-entity pv-profile-section__card-item ember-view']"
-            ):
-                interest = Interest(
-                    interestElement.find_element(By.TAG_NAME, "h3").text.strip()
-                )
-                self.interests.append(interest)
-        except:
-            print("error im finding interest......")
-            
+        self.get_interests()
+        
         # get accomplishment
-        try:
-            _ = WebDriverWait(driver, self.__WAIT_FOR_ELEMENT_TIMEOUT).until(
-                expected_conditions.presence_of_element_located(
-                    (
-                        By.XPATH,
-                        "//*[@class='pv-profile-section pv-accomplishments-section artdeco-container-card artdeco-card ember-view']",
-                    )
-                )
-            )
-            acc = driver.find_element(By.XPATH,
-                "//*[@class='pv-profile-section pv-accomplishments-section artdeco-container-card artdeco-card ember-view']"
-            )
-            for block in acc.find_elements(By.XPATH,
-                "//div[@class='pv-accomplishments-block__content break-words']"
-            ):
-                category = block.find_element(By.TAG_NAME, "h3")
-                for title in block.find_element(By.TAG_NAME,
-                    "ul"
-                ).find_elements(By.TAG_NAME, "li"):
-                    accomplishment = Accomplishment(category.text, title.text)
-                    self.accomplishments.append(accomplishment)
-        except:
-            print("error in finding accomplishment......")
-            pass
+        self.get_accomplishment()
 
         # get connections
-        try:
-            driver.get("https://www.linkedin.com/mynetwork/invite-connect/connections/")
-            _ = WebDriverWait(driver, self.__WAIT_FOR_ELEMENT_TIMEOUT).until(
-                expected_conditions.presence_of_element_located((By.CLASS_NAME, "mn-connections"))
-            )
-            connections = driver.find_element(By.CLASS_NAME, "mn-connections")
-            if connections is not None:
-                for conn in connections.find_elements(By.CLASS_NAME, "mn-connection-card"):
-                    anchor = conn.find_element(By.CLASS_NAME, "mn-connection-card__link")
-                    url = anchor.get_attribute("href")
-                    name = conn.find_element(By.CLASS_NAME, "mn-connection-card__details").find_element(By.CLASS_NAME, "mn-connection-card__name").text.strip()
-                    occupation = conn.find_element(By.CLASS_NAME, "mn-connection-card__details").find_element(By.CLASS_NAME, "mn-connection-card__occupation").text.strip()
-
-                    contact = Contact(name=name, occupation=occupation, url=url)
-                    self.add_contact(contact)
-        except:
-            print("error in finding connections OR No connections......")
-            connections = None
+        self.get_connections()
 
         if close_on_complete:
             driver.quit()
-
-    # @property
-    # def company(self):
-    #     if self.experiences:
-    #         return (
-    #             self.experiences[0].institution_name
-    #             if self.experiences[0].institution_name
-    #             else None
-    #         )
-    #     else:
-    #         return None
-
-    # @property
-    # def job_title(self):
-    #     if self.experiences:
-    #         return (
-    #             self.experiences[0].position_title
-    #             if self.experiences[0].position_title
-    #             else None
-    #         )
-    #     else:
-    #         return None
