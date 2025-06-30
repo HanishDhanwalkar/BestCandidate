@@ -1,7 +1,10 @@
 .env
 
+users.json
+
 scraped_data
 
 sample_urls.txt
 
+__py*
 */__py*
