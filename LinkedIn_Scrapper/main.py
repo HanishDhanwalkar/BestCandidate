@@ -5,7 +5,6 @@ from .actions import login
 from .scraper import Person
 
 from selenium import webdriver
-
 from dotenv import load_dotenv
 
 def scrape_profile(linkedin_url):      
@@ -21,7 +20,6 @@ def scrape_profile(linkedin_url):
         raise Exception("Please set PROXY_EMAIL_ID and PROXY_EMAIL_PASSWORD in your .env file.")
 
     driver = webdriver.Firefox()
-    
     login(driver, PROXY_EMAIL_ID, PROXY_PASSWORD) 
 
     person = Person(linkedin_url=linkedin_url,  driver=driver, get=True, scrape=True)
