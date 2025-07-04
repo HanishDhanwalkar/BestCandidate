@@ -1,0 +1,17 @@
+{
+  "job_title": "Lead Data Scientist",
+  "company": "Data Insights Corp.",
+  "location": "Mumbai, India",
+  "required_skills": [
+    {"skill": "R/Python for Data Analysis", "weight": 5, "mandatory": true},
+    {"skill": "Statistical Modeling", "weight": 4, "mandatory": true},
+    {"skill": "ETL Processes", "weight": 3, "mandatory": true},
+    {"skill": "Data Visualization (Tableau/Power BI)", "weight": 3, "mandatory": false},
+    {"skill": "Big Data Technologies (Spark/Hadoop)", "weight": 4, "mandatory": true},
+    {"skill": "Communication Skills", "weight": 2, "mandatory": false}
+  ],
+  "required_experience_years": 7,
+  "required_education": ["PhD", "Master's Degree"],
+  "preferred_certifications": ["Cloudera Certified Professional (CCP) Data Engineer", "Microsoft Certified: Azure Data Scientist Associate"],
+  "keywords": ["Predictive Analytics", "Business Intelligence", "Data Mining", "Machine Learning Operations", "MLOps"]
+}

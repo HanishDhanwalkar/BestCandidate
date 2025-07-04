@@ -1,0 +1,17 @@
+{
+  "job_title": "Junior Software Developer",
+  "company": "Innovate Solutions Pvt. Ltd.",
+  "location": "Pune, India",
+  "required_skills": [
+    {"skill": "Java or Python (one proficient)", "weight": 5, "mandatory": true},
+    {"skill": "Data Structures & Algorithms", "weight": 4, "mandatory": true},
+    {"skill": "SQL (basic)", "weight": 3, "mandatory": true},
+    {"skill": "Git (Version Control)", "weight": 3, "mandatory": true},
+    {"skill": "Web Technologies (HTML, CSS, JavaScript) - for Frontend roles", "weight": 2, "mandatory": false},
+    {"skill": "Problem-solving", "weight": 1, "mandatory": true}
+  ],
+  "required_experience_years": 0,
+  "required_education": ["Bachelor's Degree"],
+  "preferred_certifications": [],
+  "keywords": ["Entry-level", "Fresher", "Full Stack (basic)", "Backend (basic)", "Frontend (basic)"]
+}
