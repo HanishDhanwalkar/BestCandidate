@@ -1,14 +1,12 @@
 import streamlit as st
-import json
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
-import re 
 
-from LinkedIn_Scrapper.main import scrape_profile
+# from LinkedIn_Scrapper.main import scrape_profile
+# from helper import load_users, save_users, sanitize_filename
 
 from constants import USERS_FILE, SCRAPED_DATA_DIR, JDS_DIR
-from helper import load_users, save_users, sanitize_filename
 
 from pages.login_page import login_page, signup_page
 from pages.setup_profile_page import setup_profile_page
