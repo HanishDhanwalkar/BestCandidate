@@ -3,13 +3,12 @@
 ## Installation
 `git clone https://github.com/HanishDhanwalkar/BestCandidate.git`
 
+`cd BestCandidate`
+
 `pip install -r requirements.txt`
 
-Create `.nev` file containing following contents:\
-#.env \
-PROXY_EMAIL_ID="<your-proxy-email>"\
-PROXY_EMAIL_PASSWORD="<password-for-proxy-id>"\
-GEMINI_API_KEY="<your-gemini-api-key>"
+Rename `.env_EXAMPLE` to `.env` file containing following contents:\
+and fill your credentials and API-keys
 
 To run streamlit WebUI:\
 `streamlit run app.py`
