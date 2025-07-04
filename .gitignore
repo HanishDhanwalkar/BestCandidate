@@ -1,6 +1,7 @@
 .env
 
 users.json
+user_inputs.csv
 
 scraped_data
 
